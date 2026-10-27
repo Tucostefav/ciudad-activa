@@ -1,0 +1,47 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Compilados de Angular / Ionic
+app/www/
+app/dist/
+app/.angular/
+app/.sass-cache/
+
+# Android / Capacitor
+app/android/app/build/
+app/android/build/
+app/android/.gradle/
+app/android/local.properties
+app/android/app/release/
+*.apk
+*.aab
+*.keystore
+*.jks
+google-services.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+*.log
+
+# Editores y sistema
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
