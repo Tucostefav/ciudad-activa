@@ -27,8 +27,14 @@ if (missing.length) {
   console.warn(`Faltan variables: ${missing.join(', ')}`);
 }
 
+const useEmulators = process.env.FIREBASE_USE_EMULATORS === 'true';
+
 const content = (production) =>
-  `export const environment = ${JSON.stringify({ production, firebase }, null, 2)};\n`;
+  `export const environment = ${JSON.stringify(
+    { production, useEmulators: production ? false : useEmulators, firebase },
+    null,
+    2,
+  )};\n`;
 
 mkdirSync('src/environments', { recursive: true });
 writeFileSync('src/environments/environment.ts', content(false));

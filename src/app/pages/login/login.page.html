@@ -31,19 +31,19 @@
           errorText="Mínimo 6 caracteres"
         ></ion-input>
       </ion-item>
-
-      <!-- Fase 1: el rol se elige a mano para probar el menú. Se quita en la Fase 2 -->
-      <ion-item>
-        <ion-select label="Rol (simulado)" formControlName="role" interface="popover">
-          <ion-select-option value="citizen">Ciudadano</ion-select-option>
-          <ion-select-option value="officer">Funcionario municipal</ion-select-option>
-          <ion-select-option value="admin">Administrador</ion-select-option>
-        </ion-select>
-      </ion-item>
     </ion-list>
 
-    <ion-button type="submit" expand="block" class="ion-margin-top">Entrar</ion-button>
+    <ion-button type="submit" expand="block" class="ion-margin-top" [disabled]="loading()">
+      @if (loading()) {
+        <ion-spinner name="crescent"></ion-spinner>
+      } @else {
+        Entrar
+      }
+    </ion-button>
   </form>
 
-  <ion-note class="hint">El inicio de sesión todavía es de prueba: no se valida contra Firebase.</ion-note>
+  <p class="register">
+    <ion-text color="medium">¿No tienes cuenta?</ion-text>
+    <ion-button fill="clear" size="small" routerLink="/register">Crear cuenta</ion-button>
+  </p>
 </ion-content>

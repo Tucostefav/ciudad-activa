@@ -15,7 +15,7 @@ import {
 } from '@ionic/angular';
 
 import { ROLE_LABELS } from '../../models/enums';
-import { AuthService } from '../../services/auth.service';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-home',
@@ -37,8 +37,8 @@ import { AuthService } from '../../services/auth.service';
   ],
 })
 export class HomePage {
-  private auth = inject(AuthService);
+  private session = inject(SessionService);
 
-  readonly user = this.auth.currentUser;
+  readonly user = this.session.current;
   readonly roleLabels = ROLE_LABELS;
 }

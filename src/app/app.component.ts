@@ -29,6 +29,7 @@ import {
 import type { UserRole } from './models/enums';
 import { ROLE_LABELS } from './models/enums';
 import { AuthService } from './services/auth.service';
+import { SessionService } from './services/session.service';
 
 interface MenuOption {
   title: string;
@@ -62,9 +63,10 @@ interface MenuOption {
 })
 export class AppComponent {
   private auth = inject(AuthService);
+  private session = inject(SessionService);
   private router = inject(Router);
 
-  readonly user = this.auth.currentUser;
+  readonly user = this.session.current;
   readonly roleLabels = ROLE_LABELS;
 
   private readonly options: MenuOption[] = [

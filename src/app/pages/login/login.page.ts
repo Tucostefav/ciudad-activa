@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonButton,
   IonContent,
@@ -8,16 +8,16 @@ import {
   IonInput,
   IonItem,
   IonList,
-  IonNote,
-  IonSelect,
-  IonSelectOption,
+  IonSpinner,
+  IonText,
   IonTitle,
   IonToolbar,
   ToastController,
 } from '@ionic/angular';
 
-import type { UserRole } from '../../models/enums';
+import { authErrorMessage } from '../../services/auth-errors';
 import { AuthService } from '../../services/auth.service';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +25,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./login.page.scss'],
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -32,27 +33,28 @@ import { AuthService } from '../../services/auth.service';
     IonList,
     IonItem,
     IonInput,
-    IonSelect,
-    IonSelectOption,
     IonButton,
-    IonNote,
+    IonSpinner,
+    IonText,
   ],
 })
 export class LoginPage {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
+  private session = inject(SessionService);
   private router = inject(Router);
   private toast = inject(ToastController);
+
+  readonly loading = signal(false);
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    role: ['citizen' as UserRole, Validators.required],
   });
 
   ionViewWillEnter(): void {
     // Si ya hay sesión guardada no tiene sentido mostrar el login
-    if (this.auth.isLoggedIn()) {
+    if (this.session.isLoggedIn()) {
       this.router.navigateByUrl('/home', { replaceUrl: true });
     }
   }
@@ -64,10 +66,17 @@ export class LoginPage {
       return;
     }
 
-    const { email, password, role } = this.form.getRawValue();
-    await this.auth.login(email, password, role);
-    this.form.reset();
-    await this.router.navigateByUrl('/home', { replaceUrl: true });
+    const { email, password } = this.form.getRawValue();
+    this.loading.set(true);
+    try {
+      await this.auth.login(email, password);
+      this.form.reset();
+      await this.router.navigateByUrl('/home', { replaceUrl: true });
+    } catch (error) {
+      await this.showToast(authErrorMessage(error), 'danger');
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   private async showToast(message: string, color: string): Promise<void> {

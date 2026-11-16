@@ -52,6 +52,21 @@ No hay backend propio: la app habla directo con Firebase y la seguridad está en
    ionic serve
    ```
 
+### Usuarios y roles
+
+- Desde la app cualquiera se registra como **ciudadano**.
+- Para convertir una cuenta en funcionario o administrador: Consola de Firebase → Firestore → `users/{uid}` → cambiar el campo `role` a `officer` o `admin`. Las reglas no permiten que un usuario se cambie el rol a sí mismo.
+
+### Trabajar con los emuladores de Firebase
+
+Para probar sin tocar el proyecto real:
+
+```bash
+firebase emulators:start --only auth,firestore --project demo-ciudadactiva
+```
+
+y poner `useEmulators: true` en `src/environments/environment.ts` (o `FIREBASE_USE_EMULATORS=true` en el `.env` y `npm run env`). La interfaz de los emuladores queda en http://localhost:4000.
+
 ## Comandos útiles
 
 | Comando | Qué hace |

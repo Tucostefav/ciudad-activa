@@ -1,7 +1,8 @@
 import type { ApplicationConfig } from '@angular/core';
 import { inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 import {
   PreloadAllModules,
   RouteReuseStrategy,
@@ -25,9 +26,23 @@ export const appConfig: ApplicationConfig = {
 
     // Firebase (AngularFire)
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore()),
+    // Con useEmulators: true la app usa los emuladores locales (firebase emulators:start)
+    provideAuth(() => {
+      const auth = getAuth();
+      if (environment.useEmulators) {
+        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+      }
+      return auth;
+    }),
+    provideFirestore(() => {
+      const firestore = getFirestore();
+      if (environment.useEmulators) {
+        connectFirestoreEmulator(firestore, 'localhost', 8080);
+      }
+      return firestore;
+    }),
 
     // Recupera la sesión guardada antes de que los guards revisen la primera ruta
-    provideAppInitializer(() => inject(AuthService).restoreSession()),
+    provideAppInitializer(() => inject(AuthService).init()),
   ],
 };

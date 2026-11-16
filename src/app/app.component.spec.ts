@@ -3,12 +3,17 @@ import { provideRouter } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { AuthService } from './services/auth.service';
+import { SessionService } from './services/session.service';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        // En la prueba no se usa Firebase de verdad
+        { provide: AuthService, useValue: { logout: async () => undefined } },
+      ],
     }).compileComponents();
   });
 
@@ -18,8 +23,8 @@ describe('AppComponent', () => {
   });
 
   it('muestra en el menú solo las opciones del rol', async () => {
-    const auth = TestBed.inject(AuthService);
-    await auth.login('ana@correo.com', '123456', 'officer');
+    const session = TestBed.inject(SessionService);
+    await session.set({ uid: 'u1', full_name: 'Ana', email: 'ana@correo.com', role: 'officer' });
 
     const fixture = TestBed.createComponent(AppComponent);
     const urls = fixture.componentInstance.menuOptions().map((option) => option.url);
@@ -27,6 +32,6 @@ describe('AppComponent', () => {
     expect(urls).toContain('/management');
     expect(urls).not.toContain('/reports');
     expect(urls).not.toContain('/admin');
-    await auth.logout();
+    await session.clear();
   });
 });

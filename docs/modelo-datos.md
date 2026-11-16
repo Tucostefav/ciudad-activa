@@ -59,7 +59,8 @@ erDiagram
 | `id` | string (uid) | Sí | Id del documento = uid de Firebase Authentication. |
 | `full_name` | string | Sí | Nombre completo del usuario. |
 | `email` | string | Sí | Correo con el que se registró. |
-| `role` | string | Sí | `citizen`, `officer` o `admin`. |
+| `role` | string | Sí | `citizen`, `officer` o `admin`. Al registrarse siempre es `citizen`; los otros roles los asigna el administrador. |
+| `created_at` | number | Sí | Fecha de registro (milisegundos, `Date.now()`). |
 
 ### `categories`
 
@@ -102,10 +103,27 @@ erDiagram
 
 ## Reglas de seguridad
 
-Las reglas están en [`firestore.rules`](../firestore.rules). En esta fase:
+Las reglas están en [`firestore.rules`](../firestore.rules).
 
 - Toda lectura exige usuario autenticado.
-- Cada usuario solo escribe su propio documento de `users`.
-- Un reporte solo se puede crear si `owner_uid` coincide con el uid de quien lo crea, y solo su dueño lo modifica o borra.
+- `users`: cada quien crea solo su propio perfil y únicamente con rol `citizen`. Puede editar sus datos pero no cambiarse el rol; solo un `admin` cambia el rol de otro usuario. Los perfiles no se borran desde la app.
+- `reports`: un reporte solo se puede crear si `owner_uid` coincide con el uid de quien lo crea, y solo su dueño lo modifica.
 - `categories` es de solo lectura desde la app.
 - Cualquier colección no declarada queda cerrada.
+
+La función `role()` de las reglas lee el rol desde `users/{uid}` del usuario que hace la petición. Así el rol lo decide Firestore y no el teléfono: aunque alguien modifique la app, no puede darse permisos que no tiene.
+
+### Cómo se probaron
+
+Con los emuladores (`firebase emulators:start --only auth,firestore`) se probaron estos casos:
+
+| Caso | Resultado esperado |
+|---|---|
+| Crear su propio perfil con rol `admin` | Rechazado |
+| Crear su propio perfil con rol `citizen` | Permitido |
+| Cambiar su nombre | Permitido |
+| Cambiarse el rol a `admin` | Rechazado |
+| Crear el perfil de otro usuario | Rechazado |
+| Un `admin` cambia el rol de otro usuario | Permitido |
+| Borrar un perfil | Rechazado |
+| Escribir en `categories` desde la app | Rechazado |

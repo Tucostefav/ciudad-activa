@@ -5,6 +5,8 @@
 
 export const environment = {
   production: false,
+  // true para trabajar con los emuladores locales de Firebase
+  useEmulators: false,
   firebase: {
     apiKey: '',
     authDomain: '',
