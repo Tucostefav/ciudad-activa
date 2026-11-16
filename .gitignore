@@ -1,23 +1,28 @@
 # Dependencias
 node_modules/
 
-# Variables de entorno
+# Compilados
+/www
+/dist
+/out-tsc
+/.angular
+/.sass-cache
+/coverage
+/tmp
+
+# Configuración con claves (se copian desde environment.example.ts)
+src/environments/environment.ts
+src/environments/environment.prod.ts
 .env
 .env.*
 !.env.example
 
-# Compilados de Angular / Ionic
-app/www/
-app/dist/
-app/.angular/
-app/.sass-cache/
-
 # Android / Capacitor
-app/android/app/build/
-app/android/build/
-app/android/.gradle/
-app/android/local.properties
-app/android/app/release/
+/android/app/build/
+/android/build/
+/android/.gradle/
+/android/local.properties
+/android/app/release/
 *.apk
 *.aab
 *.keystore
@@ -27,21 +32,30 @@ google-services.json
 # Firebase
 .firebase/
 firebase-debug.log
+firestore-debug.log
+ui-debug.log
 *-firebase-adminsdk-*.json
 serviceAccount*.json
 
-# Supabase
-supabase/.temp/
-supabase/.branches/
+# Ionic
+/.ionic
+/platforms
+/plugins
+
+# Pruebas
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # Logs
-npm-debug.log*
-yarn-error.log*
 *.log
+npm-debug.log*
 
 # Editores y sistema
 .idea/
 .vscode/*
+!.vscode/settings.json
 !.vscode/extensions.json
 .DS_Store
 Thumbs.db

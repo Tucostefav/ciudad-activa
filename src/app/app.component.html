@@ -1,0 +1,34 @@
+<ion-app>
+  <ion-menu content-id="main-content" [disabled]="!user()">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>CiudadActiva</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list lines="none">
+        @if (user(); as u) {
+          <ion-list-header>{{ u.full_name }}</ion-list-header>
+          <ion-note class="menu-role">{{ roleLabels[u.role] }}</ion-note>
+        }
+
+        <ion-menu-toggle [autoHide]="false">
+          @for (option of menuOptions(); track option.url) {
+            <ion-item [routerLink]="option.url" routerDirection="root" routerLinkActive="selected" detail="false">
+              <ion-icon slot="start" [name]="option.icon"></ion-icon>
+              <ion-label>{{ option.title }}</ion-label>
+            </ion-item>
+          }
+
+          <ion-item button detail="false" (click)="logout()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Cerrar sesión</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-app>

@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Perfil de cada usuario (el id del documento es su uid)
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Catálogo de categorías: se consulta desde la app, se edita desde la consola
+    match /categories/{categoryId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Solo usuarios autenticados; cada quien gestiona lo suyo
+    match /reports/{reportId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+                    && request.resource.data.owner_uid == request.auth.uid;
+      allow update, delete: if signedIn()
+                    && resource.data.owner_uid == request.auth.uid;
+    }
+
+    // Todo lo que no está declarado arriba queda cerrado
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
