@@ -52,6 +52,25 @@ No hay backend propio: la app habla directo con Firebase y la seguridad está en
    ionic serve
    ```
 
+### Categorías
+
+La app solo lee las categorías. Se crean desde la Consola de Firebase → Firestore → colección `categories`, un documento por categoría con el campo `name` (por ejemplo: Baches, Alumbrado público, Recolección de basura).
+
+### Usuarios y roles
+
+- Desde la app cualquiera se registra como **ciudadano**.
+- Para convertir una cuenta en funcionario o administrador: Consola de Firebase → Firestore → `users/{uid}` → cambiar el campo `role` a `officer` o `admin`. Las reglas no permiten que un usuario se cambie el rol a sí mismo.
+
+### Trabajar con los emuladores de Firebase
+
+Para probar sin tocar el proyecto real:
+
+```bash
+firebase emulators:start --only auth,firestore --project demo-ciudadactiva
+```
+
+y poner `useEmulators: true` en `src/environments/environment.ts` (o `FIREBASE_USE_EMULATORS=true` en el `.env` y `npm run env`). La interfaz de los emuladores queda en http://localhost:4000.
+
 ## Comandos útiles
 
 | Comando | Qué hace |
@@ -60,7 +79,7 @@ No hay backend propio: la app habla directo con Firebase y la seguridad está en
 | `npm run build` | Compilación de producción en `www/` |
 | `npm test` | Pruebas unitarias (Vitest) |
 | `npm run lint` | Revisión de estilo con ESLint |
-| `firebase deploy --only firestore:rules` | Publica las reglas de Firestore |
+| `firebase deploy --only firestore:rules,firestore:indexes --project <id>` | Publica las reglas e índices de Firestore |
 
 ## Estructura
 
@@ -96,3 +115,4 @@ Se configuran en GitHub → Settings → Secrets and variables → Actions:
 - [Arquitectura](docs/arquitectura.md)
 - [Modelo de datos y diccionario](docs/modelo-datos.md)
 - [Diagramas de la app y navegación](docs/diagramas-app.md)
+- [Catálogo de operaciones de datos](docs/operaciones-datos.md)

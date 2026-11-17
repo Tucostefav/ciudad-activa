@@ -1,0 +1,100 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle del reporte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (report() === undefined) {
+    <div class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (report(); as r) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>{{ categoryName()(r.category_id) || 'Sin categoría' }}</ion-card-subtitle>
+        <ion-card-title>{{ r.title }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-chip [color]="statusColors[r.status]">{{ statusLabels[r.status] }}</ion-chip>
+
+        @if (r.description) {
+          <p class="description">{{ r.description }}</p>
+        }
+
+        <ion-list lines="none" class="data">
+          <ion-item>
+            <ion-label>
+              <p>Reportado por</p>
+              <h3>{{ r.owner_name }}</h3>
+            </ion-label>
+          </ion-item>
+          @if (r.created_at; as created) {
+            <ion-item>
+              <ion-label>
+                <p>Fecha</p>
+                <h3>{{ created.toDate() | date: 'dd/MM/yyyy HH:mm' }}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          <ion-item>
+            <ion-label>
+              <p>Ubicación</p>
+              <h3>{{ r.latitude | number: '1.4-6' }}, {{ r.longitude | number: '1.4-6' }}</h3>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    @if (nextStatus().length > 0) {
+      <div class="ion-padding-horizontal">
+        <ion-note>Cambiar estado</ion-note>
+        @for (status of nextStatus(); track status) {
+          <ion-button
+            expand="block"
+            [color]="statusColors[status]"
+            [disabled]="working()"
+            (click)="confirmChange(r, status)"
+          >
+            {{ statusLabels[status] }}
+          </ion-button>
+        }
+      </div>
+    }
+
+    @if (canCancel()) {
+      <div class="ion-padding-horizontal">
+        <ion-button expand="block" fill="outline" color="danger" [disabled]="working()" (click)="confirmCancel(r)">
+          Cancelar reporte
+        </ion-button>
+      </div>
+    }
+
+    <ion-list>
+      <ion-list-header>Historial de estados</ion-list-header>
+      @for (item of history(); track item.id) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ statusLabels[item.old_status] }} → {{ statusLabels[item.new_status] }}</h3>
+            <p>
+              {{ item.changed_by_name }}
+              @if (item.changed_at; as changed) {
+                · {{ changed.toDate() | date: 'dd/MM/yyyy HH:mm' }}
+              }
+            </p>
+          </ion-label>
+        </ion-item>
+      } @empty {
+        <ion-item>
+          <ion-label color="medium">Todavía no hay cambios de estado.</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  } @else {
+    <app-empty-state icon="alert-circle-outline" message="No se encontró el reporte o no tienes permiso para verlo."></app-empty-state>
+  }
+</ion-content>

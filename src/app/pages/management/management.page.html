@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Reportes entrantes</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="filter()" (ionChange)="onFilterChange($event.detail.value)">
+      <ion-segment-button value="pending">
+        <ion-label>Pendientes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="in_progress">
+        <ion-label>En atención</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="closed">
+        <ion-label>Cerrados</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (reports() === undefined) {
+    <div class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else {
+    @for (report of filtered(); track report.id) {
+      <app-report-card
+        [report]="report"
+        [categoryName]="categoryNames()[report.category_id]"
+        [showOwner]="true"
+        [routerLink]="['/reports', report.id]"
+      ></app-report-card>
+    } @empty {
+      <app-empty-state icon="clipboard-outline" message="No hay reportes en esta lista."></app-empty-state>
+    }
+  }
+</ion-content>

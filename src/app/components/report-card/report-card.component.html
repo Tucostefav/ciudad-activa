@@ -1,4 +1,4 @@
-<ion-card>
+<ion-card button="true">
   <ion-card-header>
     <ion-card-subtitle>{{ categoryName() || 'Sin categoría' }}</ion-card-subtitle>
     <ion-card-title>{{ report().title }}</ion-card-title>
@@ -6,8 +6,13 @@
 
   <ion-card-content>
     <ion-chip [color]="statusColors[report().status]">{{ statusLabels[report().status] }}</ion-chip>
-    <p class="coords">
-      {{ report().latitude | number: '1.4-4' }}, {{ report().longitude | number: '1.4-4' }}
+    <p class="meta">
+      @if (report().created_at; as created) {
+        {{ created.toDate() | date: 'dd/MM/yyyy HH:mm' }}
+      }
+      @if (showOwner()) {
+        · {{ report().owner_name }}
+      }
     </p>
   </ion-card-content>
 </ion-card>
