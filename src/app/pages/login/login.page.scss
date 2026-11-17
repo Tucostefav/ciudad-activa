@@ -1,0 +1,21 @@
+.brand {
+  text-align: center;
+  margin: 32px 0 24px;
+
+  h1 {
+    color: var(--ion-color-primary);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+  }
+}
+
+.hint {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+}
