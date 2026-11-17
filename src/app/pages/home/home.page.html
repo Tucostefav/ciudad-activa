@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Inicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (user(); as u) {
+    <h2>Hola, {{ u.full_name }}</h2>
+    <p class="role">{{ roleLabels[u.role] }}</p>
+
+    @switch (u.role) {
+      @case ('citizen') {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Mis reportes</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Consulta las incidencias que has reportado y en qué estado se encuentran.</p>
+            <ion-button fill="clear" routerLink="/reports">Ver mis reportes</ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
+      @case ('officer') {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Reportes entrantes</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Revisa los reportes de los ciudadanos y actualiza su estado.</p>
+            <ion-button fill="clear" routerLink="/management">Ir a la gestión</ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
+      @case ('admin') {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Panel de administración</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Gestiona las categorías de incidencia y consulta los indicadores.</p>
+            <ion-button fill="clear" routerLink="/admin">Abrir el panel</ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
+    }
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Mapa de incidencias</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Ubica los reportes de la ciudad en el mapa.</p>
+        <ion-button fill="clear" routerLink="/map">Ver mapa</ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

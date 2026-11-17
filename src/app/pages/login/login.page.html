@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="brand">
+    <h1>CiudadActiva</h1>
+    <p>Reporta las incidencias de tu ciudad</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list>
+      <ion-item>
+        <ion-input
+          label="Correo electrónico"
+          labelPlacement="floating"
+          type="email"
+          formControlName="email"
+          errorText="Ingresa un correo válido"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Contraseña"
+          labelPlacement="floating"
+          type="password"
+          formControlName="password"
+          errorText="Mínimo 6 caracteres"
+        ></ion-input>
+      </ion-item>
+
+      <!-- Fase 1: el rol se elige a mano para probar el menú. Se quita en la Fase 2 -->
+      <ion-item>
+        <ion-select label="Rol (simulado)" formControlName="role" interface="popover">
+          <ion-select-option value="citizen">Ciudadano</ion-select-option>
+          <ion-select-option value="officer">Funcionario municipal</ion-select-option>
+          <ion-select-option value="admin">Administrador</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <ion-button type="submit" expand="block" class="ion-margin-top">Entrar</ion-button>
+  </form>
+
+  <ion-note class="hint">El inicio de sesión todavía es de prueba: no se valida contra Firebase.</ion-note>
+</ion-content>

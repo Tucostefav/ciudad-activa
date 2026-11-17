@@ -1,0 +1,18 @@
+<ion-card button="true">
+  <ion-card-header>
+    <ion-card-subtitle>{{ categoryName() || 'Sin categoría' }}</ion-card-subtitle>
+    <ion-card-title>{{ report().title }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-chip [color]="statusColors[report().status]">{{ statusLabels[report().status] }}</ion-chip>
+    <p class="meta">
+      @if (report().created_at; as created) {
+        {{ created.toDate() | date: 'dd/MM/yyyy HH:mm' }}
+      }
+      @if (showOwner()) {
+        · {{ report().owner_name }}
+      }
+    </p>
+  </ion-card-content>
+</ion-card>

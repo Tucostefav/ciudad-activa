@@ -1,0 +1,53 @@
+{
+  "name": "ciudad-activa",
+  "version": "0.1.0",
+  "author": "Tucostefav",
+  "description": "App movil CiudadActiva - reportes ciudadanos de incidencias urbanas",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "lint": "ng lint",
+    "test": "ng test --no-watch",
+    "test:e2e": "playwright test",
+    "env": "node scripts/set-env.mjs"
+  },
+  "dependencies": {
+    "@angular/common": "21.2.26",
+    "@angular/compiler": "21.2.26",
+    "@angular/core": "21.2.26",
+    "@angular/fire": "21.0.0",
+    "@angular/forms": "21.2.26",
+    "@angular/platform-browser": "21.2.26",
+    "@angular/router": "21.2.26",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/preferences": "8.0.1",
+    "@ionic/angular": "^9.0.0",
+    "firebase": "^12.18.0",
+    "ionicons": "^8.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "21.2.30",
+    "@angular/cli": "21.2.30",
+    "@angular/compiler-cli": "21.2.26",
+    "@angular/language-service": "21.2.26",
+    "@capacitor/cli": "8.5.3",
+    "@ionic/angular-toolkit": "^13.0.0",
+    "@ionic/eslint-config": "^0.5.0",
+    "@ionic/prettier-config": "^4.0.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.0.0",
+    "angular-eslint": "21.4.0",
+    "eslint": "^10.10.0",
+    "jsdom": "^30.1.1",
+    "prettier": "^3.9.10",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.61.0",
+    "vitest": "^4.1.12"
+  },
+  "prettier": "@ionic/prettier-config"
+}

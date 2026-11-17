@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Rol guardado en el perfil del usuario que hace la petición
+    function role() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // Perfil de cada usuario (el id del documento es su uid)
+    match /users/{uid} {
+      allow read: if signedIn();
+
+      // Al registrarse solo puede crear su propio perfil y siempre como ciudadano
+      allow create: if signedIn()
+                    && request.auth.uid == uid
+                    && request.resource.data.role == 'citizen';
+
+      // Puede editar sus datos pero no cambiarse el rol;
+      // el administrador sí puede cambiar el rol de otros usuarios
+      allow update: if signedIn() && (
+                      (request.auth.uid == uid
+                        && request.resource.data.role == resource.data.role)
+                      || role() == 'admin'
+                    );
+
+      allow delete: if false;
+    }
+
+    // Catálogo de categorías: se consulta desde la app, se edita desde la consola
+    match /categories/{categoryId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Solo cambian estos campos cuando se actualiza el estado de un reporte
+    function onlyStatusChanges() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updated_at']);
+    }
+
+    function validStatus(status) {
+      return status in ['received', 'in_review', 'in_progress', 'resolved', 'rejected'];
+    }
+
+    match /reports/{reportId} {
+      // El ciudadano ve sus reportes; el funcionario y el admin ven todos
+      allow read: if signedIn()
+                  && (resource.data.owner_uid == request.auth.uid
+                      || role() in ['officer', 'admin']);
+
+      // Crear: solo a su nombre, en el estado inicial y con los datos mínimos
+      allow create: if signedIn()
+                    && request.resource.data.owner_uid == request.auth.uid
+                    && request.resource.data.status == 'received'
+                    && request.resource.data.title is string
+                    && request.resource.data.title.size() > 0
+                    && request.resource.data.category_id is string
+                    && request.resource.data.latitude is number
+                    && request.resource.data.longitude is number;
+
+      // Actualizar: el funcionario cambia el estado; el dueño solo puede cancelar
+      // mientras el reporte no esté en atención (borrado lógico)
+      allow update: if signedIn() && onlyStatusChanges() && (
+                      (role() == 'officer' && validStatus(request.resource.data.status))
+                      || (resource.data.owner_uid == request.auth.uid
+                          && request.resource.data.status == 'cancelled'
+                          && resource.data.status in ['received', 'in_review'])
+                    );
+
+      // No se borran reportes: se cancelan
+      allow delete: if false;
+    }
+
+    // Historial de cambios de estado
+    match /report_status_history/{historyId} {
+      allow read: if signedIn()
+                  && (role() in ['officer', 'admin']
+                      || get(/databases/$(database)/documents/reports/$(resource.data.report_id)).data.owner_uid == request.auth.uid);
+      allow create: if signedIn()
+                    && role() == 'officer'
+                    && request.resource.data.changed_by_user_id == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Todo lo que no está declarado arriba queda cerrado
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
